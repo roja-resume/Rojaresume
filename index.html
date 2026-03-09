@@ -3,71 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Portfolio</title>
-    <style>
-        body { margin: 0; overflow: hidden; }
-        #container { position: absolute; width: 100%; height: 100%; }
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; color: white; }
-        nav { background: rgba(0, 0, 0, 0.5); padding: 10px; }
-        .skills, .projects, .contact { margin: 20px; }
-        #statsGrid { display: flex; justify-content: space-around; }
-        #heroText { position: absolute; left: 20px; top: 20px; font-size: 24px; }
-        /* Additional styles for UI and accents */
-        .accent { color: cyan; }
-    </style>
+    <title>Advanced 3D Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <div id="container"></div>
-    <div class="overlay">
-        <nav>Portfolio Navigation</nav>
-        <div id="statsGrid">
-            <div><span class="accent">Skills</span></div>
-            <div><span class="accent">Projects</span></div>
-            <div><span class="accent">Contact</span></div>
+    <header>
+        <h1>My 3D Portfolio</h1>
+        <nav>
+            <ul>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#certifications">Certifications</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="introduction">
+        <h2>Welcome to My Portfolio</h2>
+        <p>This portfolio showcases my projects and skills in a 3D interactive environment.</p>
+    </section>
+
+    <section id="3d-environment">
+        <h2>3D Computer Monitor</h2>
+        <div id="monitor"></div>
+    </section>
+
+    <section id="projects">
+        <h2>Project Showcase</h2>
+        <div class="project-item">
+            <h3>Project Title</h3>
+            <p>Description of the project goes here.</p>
         </div>
-        <div id="heroText">Welcome to My Professional 3D Portfolio</div>
-    </div>
-    <script src="https://threejs.org/build/three.js"></script>
+        <!-- Repeat for more projects -->
+    </section>
+
+    <section id="education">
+        <h2>Education Details</h2>
+        <p>Your education details go here.</p>
+    </section>
+
+    <section id="certifications">
+        <h2>Certifications</h2>
+        <p>Your certifications go here.</p>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Information</h2>
+        <p>Email: youremail@example.com</p>
+        <p>LinkedIn: yourlinkedinprofile</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Your Name</p>
+    </footer>
     <script>
-        // Three.js code for 3D scene and canvas
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
+        // 3D animation code goes here
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('container').appendChild(renderer.domElement);
+        document.getElementById('monitor').appendChild(renderer.domElement);
+        camera.position.z = 5;
 
-        // Monitor geometry and material
-        const monitorGeometry = new THREE.BoxGeometry(1, 1, 0.1);
-        const monitorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
-        const monitor = new THREE.Mesh(monitorGeometry, monitorMaterial);
-        scene.add(monitor);
-
-        // Rotating monitor
         function animate() {
             requestAnimationFrame(animate);
-            monitor.rotation.y += 0.01; // Adjust rotation speed
+            // Custom animation logic
             renderer.render(scene, camera);
         }
         animate();
-
-        // Implementing particle network and other features...
-        // Dynamically update monitor content and add interactive elements
-
-        // Control settings for auto-rotation and manual mouse control
-        let isMouseControl = true;
-        window.addEventListener('mousemove', function(event) {
-            if(isMouseControl) {
-                monitor.rotation.y = (event.clientX / window.innerWidth) * Math.PI;
-                monitor.rotation.x = (event.clientY / window.innerHeight) * Math.PI;
-            }
-        });
-
-        // Resume download feature
-        const resumeLink = document.createElement('a');
-        resumeLink.href = 'path/to/resume.pdf';
-        resumeLink.innerText = 'Download Resume';
-        document.body.appendChild(resumeLink);
-
     </script>
 </body>
 </html>
