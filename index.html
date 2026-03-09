@@ -1,78 +1,1011 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced 3D Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U.Roja — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --bg2: #0d1117;
+    --panel: #111720;
+    --border: #1e2d3d;
+    --accent: #00e5ff;
+    --accent2: #7b2fff;
+    --green: #00ff88;
+    --text: #c9d1d9;
+    --muted: #5a7080;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,255,0.015) 2px,
+      rgba(0,229,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    background: rgba(8,11,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    z-index: 1;
+    padding: 8rem 3rem 5rem;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(123,47,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,229,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-content { max-width: 900px; }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 30px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 .name-u { color: var(--accent); }
+  h1 .name-roja { color: #fff; }
+
+  .hero-subtitle {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+
+  .hero-subtitle .highlight { color: var(--green); }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0,229,255,0.4);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  .btn-outline:hover {
+    background: rgba(0,229,255,0.07);
+    box-shadow: 0 0 15px rgba(0,229,255,0.2);
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex;
+    gap: 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .status-item { display: flex; flex-direction: column; gap: 0.3rem; }
+  .status-label { color: var(--accent); font-size: 0.6rem; letter-spacing: 2px; }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .skill-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .skill-card:hover::before { opacity: 1; }
+
+  .skill-cat {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.3rem 0.75rem;
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 2px;
+    color: var(--text);
+  }
+
+  .tag.green {
+    background: rgba(0,255,136,0.06);
+    border-color: rgba(0,255,136,0.15);
+    color: var(--green);
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+
+  .project-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-4px); }
+  .project-card:hover::after { transform: scaleX(1); }
+
+  .project-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .project-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  /* EDUCATION */
+  .edu-timeline { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .edu-item {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 2rem;
+    padding: 1.75rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    transition: border-color 0.2s;
+  }
+
+  .edu-item:hover { border-color: rgba(0,229,255,0.3); }
+
+  .edu-year {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+
+  .edu-degree { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+  .edu-school { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .edu-grade { font-family: var(--mono); font-size: 0.75rem; color: var(--green); }
+
+  /* CERTS */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .cert-item {
+    padding: 1.25rem 1.5rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: border-color 0.2s;
+  }
+
+  .cert-item:hover { border-color: var(--accent); }
+
+  .cert-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  /* INTERESTS */
+  .interests-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .interest-pill {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    background: var(--panel);
+    transition: all 0.2s;
+  }
+
+  .interest-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(0,229,255,0.1);
+  }
+
+  /* CONTACT */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .contact-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,229,255,0.08);
+  }
+
+  .contact-icon {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 0.2rem;
+  }
+
+  .contact-value {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    word-break: break-all;
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 3px; height: 1em;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-left: 4px;
+    animation: blink 1s infinite;
+  }
+
+  .fade-in { animation: fadeUp 0.8s ease forwards; }
+  .delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .delay-2 { animation-delay: 0.25s; opacity: 0; }
+  .delay-3 { animation-delay: 0.4s; opacity: 0; }
+  .delay-4 { animation-delay: 0.55s; opacity: 0; }
+
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .nav-links.open { 
+      display: flex; 
+      flex-direction: column;
+      position: fixed;
+      top: 52px; left: 0; right: 0;
+      background: rgba(8,11,16,0.97);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem 1.5rem;
+      gap: 1.25rem;
+      z-index: 999;
+    }
+    .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--accent); border-radius: 2px; transition: 0.2s; }
+    #hero { padding: 7rem 1.5rem 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .edu-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    footer { padding: 1.5rem; }
+    .status-bar { gap: 1.5rem; }
+  }
+  @media (min-width: 601px) {
+    .hamburger { display: none; }
+  }
+</style>
 </head>
 <body>
-    <header>
-        <h1>My 3D Portfolio</h1>
-        <nav>
-            <ul>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#education">Education</a></li>
-                <li><a href="#certifications">Certifications</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <section id="introduction">
-        <h2>Welcome to My Portfolio</h2>
-        <p>This portfolio showcases my projects and skills in a 3D interactive environment.</p>
-    </section>
+<nav>
+  <div class="nav-logo">U.ROJA</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a onclick="navTo('skills')">SKILLS</a></li>
+    <li><a onclick="navTo('projects')">PROJECTS</a></li>
+    <li><a onclick="navTo('education')">EDUCATION</a></li>
+    <li><a onclick="navTo('resume')">RESUME</a></li>
+    <li><a onclick="navTo('contact')">CONTACT</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleNav()" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<!-- HERO -->
+<div id="hero" style="max-width:1100px;margin:0 auto;">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="hero-tag fade-in delay-1">BTECH CSE(AI) · MITS MADANAPALLE</div>
+    <h1 class="fade-in delay-2">
+      <span class="name-u">U.</span><span class="name-roja">ROJA</span><span class="cursor"></span>
+    </h1>
+    <p class="hero-subtitle fade-in delay-3">
+      Engineering student · <span class="highlight">AI enthusiast</span> · Vibe coder<br>
+      Building with LLMs, automation workflows & web development.
+    </p>
+    <div class="hero-cta fade-in delay-4">
+      <button class="btn btn-primary" onclick="navTo('projects')">VIEW PROJECTS</button>
+      <button class="btn btn-outline" onclick="navTo('resume')">VIEW RESUME</button>
+      <button class="btn btn-outline" onclick="navTo('contact')">GET IN TOUCH</button>
+    </div>
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="status-label">STATUS</span>
+        <span>Available for opportunities</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">LOCATION</span>
+        <span>Andhra Pradesh, India</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">DEGREE</span>
+        <span>B.Tech CSE(AI) · 2024–2028</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">FOCUS</span>
+        <span>AI · Automation · Web Dev</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+</div>
 
-    <section id="3d-environment">
-        <h2>3D Computer Monitor</h2>
-        <div id="monitor"></div>
-    </section>
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Skills</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-cat">LANGUAGES</div>
+      <div class="skill-items">
+        <span class="tag">Python</span>
+        <span class="tag">C</span>
+        <span class="tag">Java</span>
+        <span class="tag">HTML/CSS/JS</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-cat">AI & LLMs</div>
+      <div class="skill-items">
+        <span class="tag">LLM Basics</span>
+        <span class="tag">Token Systems</span>
+        <span class="tag green">AI Prompting</span>
+        <span class="tag green">Vibe Coding</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-cat">TOOLS & PLATFORMS</div>
+      <div class="skill-items">
+        <span class="tag">n8n Automation</span>
+        <span class="tag">GitHub</span>
+        <span class="tag">VS Code</span>
+        <span class="tag">MS Office</span>
+      </div>
+    </div>
 
-    <section id="projects">
-        <h2>Project Showcase</h2>
-        <div class="project-item">
-            <h3>Project Title</h3>
-            <p>Description of the project goes here.</p>
+    <div class="skill-card">
+      <div class="skill-cat">WEB DEV</div>
+      <div class="skill-items">
+        <span class="tag">Frontend Dev</span>
+        <span class="tag">Full Stack Basics</span>
+        <span class="tag green">Workflow Automation</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-cat">SOFT SKILLS</div>
+      <div class="skill-items">
+        <span class="tag">Leadership</span>
+        <span class="tag">Communication</span>
+        <span class="tag">Teamwork</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Projects</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-num">PROJECT / 001</div>
+      <div class="project-name">n8n Workflow Automation</div>
+      <div class="project-desc">
+        Designing and deploying automated workflows using n8n connecting AI services with productivity tools. Exploring API integrations for task automation, reducing manual effort in repetitive processes.
+      </div>
+      <div class="project-tech">
+        <span class="tag">n8n</span>
+        <span class="tag">API Integrations</span>
+        <span class="tag green">Automation</span>
+        <span class="tag">No-code / Low-code</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">PROJECT / 002</div>
+      <div class="project-name">More Projects Coming Soon</div>
+      <div class="project-desc">
+        Currently building at the intersection of AI, automation, and web development. Check back or reach out to collaborate on something new.
+      </div>
+      <div class="project-tech">
+        <span class="tag green">Open to Collaborate</span>
+        <span class="tag">AI</span>
+        <span class="tag">Web Dev</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Education</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="edu-timeline">
+    <div class="edu-item">
+      <div>
+        <div class="edu-year">2024 — 2028</div>
+      </div>
+      <div>
+        <div class="edu-degree">B.Tech in CSE (Artificial Intelligence)</div>
+        <div class="edu-school">MITS, Madanapalle · Andhra Pradesh, India</div>
+        <div class="edu-grade">Currently Pursuing</div>
+      </div>
+    </div>
+    <div class="edu-item">
+      <div>
+        <div class="edu-year">2022 — 2024</div>
+      </div>
+      <div>
+        <div class="edu-degree">XII — MPC (BIEAP)</div>
+        <div class="edu-school">Sri Sai Chaithanya Junior College · Andhra Pradesh, India</div>
+        <div class="edu-grade">93.7%</div>
+      </div>
+    </div>
+    <div class="edu-item">
+      <div>
+        <div class="edu-year">2022</div>
+      </div>
+      <div>
+        <div class="edu-degree">Class X (BSEAP)</div>
+        <div class="edu-school">ZPHS Tharigonda · Andhra Pradesh, India</div>
+        <div class="edu-grade">496 / 600</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certs">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Certifications & Workshops</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="certs-grid">
+    <div class="cert-item"><span class="cert-dot"></span>AWS Cloud Practitioner Essentials</div>
+    <div class="cert-item"><span class="cert-dot"></span>AI Robotics Workshop</div>
+    <div class="cert-item"><span class="cert-dot"></span>n8n Workflow Automation</div>
+  </div>
+</section>
+
+<!-- INTERESTS -->
+<section id="interests">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Interests</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="interests-wrap">
+    <div class="interest-pill">Artificial Intelligence</div>
+    <div class="interest-pill">Automation Workflows</div>
+    <div class="interest-pill">Coding with AI</div>
+    <div class="interest-pill">Cyber Security</div>
+    <div class="interest-pill">Latest Technology</div>
+    <div class="interest-pill">LLMs & Prompting</div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Contact</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-grid">
+    <a href="mailto:upputhollaroja03@gmail.com" class="contact-card">
+      <div class="contact-icon">✉</div>
+      <div>
+        <div class="contact-label">EMAIL</div>
+        <div class="contact-value">upputhollaroja03@gmail.com</div>
+      </div>
+    </a>
+    <a href="tel:+919347192047" class="contact-card">
+      <div class="contact-icon">📱</div>
+      <div>
+        <div class="contact-label">MOBILE</div>
+        <div class="contact-value">+91 9347192047</div>
+      </div>
+    </a>
+    <a href="https://www.linkedin.com/in/roja-upputholla-47358a32b" target="_blank" class="contact-card">
+      <div class="contact-icon">in</div>
+      <div>
+        <div class="contact-label">LINKEDIN</div>
+        <div class="contact-value">roja-upputholla-47358a32b</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- RESUME SECTION -->
+<section id="resume">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">Resume</h2>
+    <div class="section-line"></div>
+  </div>
+  <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">
+    ATS-optimised resume · Use your browser's <span style="color:var(--accent)">Print → Save as PDF</span> to download.
+  </p>
+  <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;">
+    <button class="btn btn-primary" onclick="printResume()">⬇ DOWNLOAD RESUME</button>
+  </div>
+
+  <!-- ATS RESUME PAPER -->
+  <div id="ats-resume" style="
+    background:#fff;
+    color:#111;
+    width:210mm;
+    margin:0 auto;
+    padding:18mm 20mm;
+    min-height:297mm;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:10.5pt;
+    line-height:1.45;
+    border-radius:4px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+  ">
+
+    <!-- HEADER -->
+    <div style="border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px;">
+      <h1 style="font-size:22pt;font-weight:700;letter-spacing:1px;margin:0 0 4px;">U. ROJA</h1>
+      <div style="font-size:9.5pt;color:#333;line-height:1.8;">
+        B.Tech CSE (Artificial Intelligence) · MITS, Madanapalle, Andhra Pradesh, India<br>
+        📧 upputhollaroja03@gmail.com &nbsp;|&nbsp; 📱 +91 9347192047 &nbsp;|&nbsp;
+        🔗 linkedin.com/in/roja-upputholla-47358a32b
+      </div>
+    </div>
+
+    <!-- OBJECTIVE -->
+    <div style="margin-bottom:14px;">
+      <h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:6px;">Objective</h2>
+      <p style="font-size:10pt;color:#222;">
+        Motivated B.Tech CSE (AI) student with hands-on experience in AI prompting, LLM workflows, n8n automation, and web development. Eager to apply technical and problem-solving skills in real-world AI and software engineering environments. Strong communicator with a collaborative mindset and a passion for emerging technology.
+      </p>
+    </div>
+
+    <!-- EDUCATION -->
+    <div style="margin-bottom:14px;">
+      <h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:8px;">Education</h2>
+
+      <div style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <strong style="font-size:10.5pt;">B.Tech in Computer Science Engineering (Artificial Intelligence)</strong>
+          <span style="font-size:9.5pt;color:#444;white-space:nowrap;">2024 – 2028</span>
         </div>
-        <!-- Repeat for more projects -->
-    </section>
+        <div style="color:#333;font-size:9.5pt;">MITS (Madanapalle Institute of Technology & Science), Andhra Pradesh, India</div>
+        <div style="color:#555;font-size:9pt;">CGPA: In Progress</div>
+      </div>
 
-    <section id="education">
-        <h2>Education Details</h2>
-        <p>Your education details go here.</p>
-    </section>
+      <div style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <strong style="font-size:10.5pt;">Class XII – MPC (BIEAP)</strong>
+          <span style="font-size:9.5pt;color:#444;white-space:nowrap;">2022 – 2024</span>
+        </div>
+        <div style="color:#333;font-size:9.5pt;">Sri Sai Chaithanya Junior College, Andhra Pradesh, India</div>
+        <div style="color:#555;font-size:9pt;">Percentage: 93.7%</div>
+      </div>
 
-    <section id="certifications">
-        <h2>Certifications</h2>
-        <p>Your certifications go here.</p>
-    </section>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <strong style="font-size:10.5pt;">Class X (BSEAP)</strong>
+          <span style="font-size:9.5pt;color:#444;white-space:nowrap;">2022</span>
+        </div>
+        <div style="color:#333;font-size:9.5pt;">ZPHS Tharigonda, Andhra Pradesh, India</div>
+        <div style="color:#555;font-size:9pt;">Score: 496 / 600</div>
+      </div>
+    </div>
 
-    <section id="contact">
-        <h2>Contact Information</h2>
-        <p>Email: youremail@example.com</p>
-        <p>LinkedIn: yourlinkedinprofile</p>
-    </section>
+    <!-- SKILLS -->
+    <div style="margin-bottom:14px;">
+      <h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:8px;">Skills</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:9.5pt;">
+        <tr>
+          <td style="padding:3px 10px 3px 0;width:28%;color:#444;font-weight:700;vertical-align:top;">Languages</td>
+          <td style="padding:3px 0;color:#222;">Python, C, Java, HTML/CSS/JavaScript</td>
+        </tr>
+        <tr>
+          <td style="padding:3px 10px 3px 0;color:#444;font-weight:700;vertical-align:top;">AI & LLMs</td>
+          <td style="padding:3px 0;color:#222;">LLM Fundamentals, Token Systems, AI Prompting, Vibe Coding (AI-assisted development)</td>
+        </tr>
+        <tr>
+          <td style="padding:3px 10px 3px 0;color:#444;font-weight:700;vertical-align:top;">Tools & Platforms</td>
+          <td style="padding:3px 0;color:#222;">n8n (Workflow Automation), GitHub, Visual Studio Code, MS Office</td>
+        </tr>
 
-    <footer>
-        <p>&copy; 2026 Your Name</p>
-    </footer>
-    <script>
-        // 3D animation code goes here
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('monitor').appendChild(renderer.domElement);
-        camera.position.z = 5;
+        <tr>
+          <td style="padding:3px 10px 3px 0;color:#444;font-weight:700;vertical-align:top;">Web Development</td>
+          <td style="padding:3px 0;color:#222;">Frontend Development, Full Stack Basics, REST APIs</td>
+        </tr>
+        <tr>
+          <td style="padding:3px 10px 3px 0;color:#444;font-weight:700;vertical-align:top;">Soft Skills</td>
+          <td style="padding:3px 0;color:#222;">Leadership, Communication, Teamwork, Problem Solving</td>
+        </tr>
+      </table>
+    </div>
 
-        function animate() {
-            requestAnimationFrame(animate);
-            // Custom animation logic
-            renderer.render(scene, camera);
-        }
-        animate();
-    </script>
+    <!-- PROJECTS -->
+    <div style="margin-bottom:14px;">
+      <h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:8px;">Projects</h2>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <strong style="font-size:10.5pt;">n8n Workflow Automation</strong>
+          <span style="font-size:9.5pt;color:#444;">2024 – Present</span>
+        </div>
+        <ul style="margin:4px 0 0 18px;padding:0;font-size:9.5pt;color:#222;">
+          <li>Designed and deployed automated workflows using n8n connecting AI services with productivity tools.</li>
+          <li>Explored API integrations for task automation, reducing manual effort in repetitive processes.</li>
+        </ul>
+        <div style="font-size:9pt;color:#555;margin-top:3px;"><strong>Technologies:</strong> n8n, REST APIs, Workflow Automation</div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATIONS -->
+    <div style="margin-bottom:14px;">
+      <h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:8px;">Certifications & Workshops</h2>
+      <ul style="margin:0 0 0 18px;padding:0;font-size:9.5pt;color:#222;">
+        <li>AWS Cloud Practitioner Essentials</li>
+        <li>AI Robotics Workshop</li>
+        <li>n8n Workflow Automation – Currently learning advanced automation pipelines</li>
+      </ul>
+    </div>
+
+    <!-- INTERESTS -->
+    <div>
+      <h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #ccc;padding-bottom:3px;margin-bottom:6px;">Interests</h2>
+      <p style="font-size:9.5pt;color:#222;">
+        Artificial Intelligence · LLMs & Prompt Engineering · Automation Workflows · Cybersecurity · Web Development · Latest Technology
+      </p>
+    </div>
+
+  </div><!-- end ats-resume -->
+</section>
+
+<script>
+  // Make functions global so onclick attributes can access them
+  window.toggleNav = function() {
+    document.getElementById('navLinks').classList.toggle('open');
+  };
+  window.navTo = function(id) {
+    var el = document.getElementById(id);
+    if (el) el.scrollIntoView({behavior:'smooth'});
+    document.getElementById('navLinks').classList.remove('open');
+  };
+  window.printResume = function() {
+    var resume = document.getElementById('ats-resume').innerHTML;
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>U.Roja Resume<\/title>'
+      + '<style>'
+      + '* { box-sizing: border-box; margin: 0; padding: 0; }'
+      + 'body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; padding: 18mm 20mm; }'
+      + 'ul { margin-left: 18px; } li { margin-bottom: 3px; }'
+      + '@page { size: A4; margin: 0; }'
+      + '<\/style><\/head><body>' + resume + '<\/body><\/html>';
+    var blob = new Blob([html], {type: 'text/html'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'U_Roja_Resume.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+</script>
+
+<footer>
+  <span>// U.ROJA · MITS MADANAPALLE · 2024</span>
+  <span style="color:var(--accent)">CSE(AI) ENGINEERING</span>
+</footer>
+
 </body>
 </html>
