@@ -6,48 +6,68 @@
     <title>3D Portfolio</title>
     <style>
         body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
+        #container { position: absolute; width: 100%; height: 100%; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; color: white; }
+        nav { background: rgba(0, 0, 0, 0.5); padding: 10px; }
+        .skills, .projects, .contact { margin: 20px; }
+        #statsGrid { display: flex; justify-content: space-around; }
+        #heroText { position: absolute; left: 20px; top: 20px; font-size: 24px; }
+        /* Additional styles for UI and accents */
+        .accent { color: cyan; }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div id="container"></div>
+    <div class="overlay">
+        <nav>Portfolio Navigation</nav>
+        <div id="statsGrid">
+            <div><span class="accent">Skills</span></div>
+            <div><span class="accent">Projects</span></div>
+            <div><span class="accent">Contact</span></div>
+        </div>
+        <div id="heroText">Welcome to My Professional 3D Portfolio</div>
+    </div>
+    <script src="https://threejs.org/build/three.js"></script>
     <script>
-        // Create 3D scene
+        // Three.js code for 3D scene and canvas
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas') });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('container').appendChild(renderer.domElement);
 
-        // Create rotating monitor
-        const geometry = new THREE.BoxGeometry(1, 0.75, 0.1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const monitor = new THREE.Mesh(geometry, material);
+        // Monitor geometry and material
+        const monitorGeometry = new THREE.BoxGeometry(1, 1, 0.1);
+        const monitorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const monitor = new THREE.Mesh(monitorGeometry, monitorMaterial);
         scene.add(monitor);
 
-        // Camera settings
-        camera.position.z = 5;
-
-        // Animation loop
+        // Rotating monitor
         function animate() {
             requestAnimationFrame(animate);
-            monitor.rotation.y += 0.01;
+            monitor.rotation.y += 0.01; // Adjust rotation speed
             renderer.render(scene, camera);
         }
         animate();
 
-        // Add resume download functionality
-        const downloadLink = document.createElement('a');
-        downloadLink.href = 'path_to_resume.pdf';
-        downloadLink.innerText = 'Download Resume';
-        document.body.appendChild(downloadLink);
+        // Implementing particle network and other features...
+        // Dynamically update monitor content and add interactive elements
 
-        // Handle responsive design
-        window.addEventListener('resize', () => { 
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        // Control settings for auto-rotation and manual mouse control
+        let isMouseControl = true;
+        window.addEventListener('mousemove', function(event) {
+            if(isMouseControl) {
+                monitor.rotation.y = (event.clientX / window.innerWidth) * Math.PI;
+                monitor.rotation.x = (event.clientY / window.innerHeight) * Math.PI;
+            }
         });
+
+        // Resume download feature
+        const resumeLink = document.createElement('a');
+        resumeLink.href = 'path/to/resume.pdf';
+        resumeLink.innerText = 'Download Resume';
+        document.body.appendChild(resumeLink);
+
     </script>
 </body>
 </html>
